@@ -395,8 +395,61 @@ except mysql.connector.Error as err:
 else:
   cnx.close()
 
+#-----------------------------------Prediccion---------------------------------------------------------------------------
 
-# In[ ]:
+import numpy as np
+import pandas as pd
+from sklearn.neural_network import MLPRegressor
+from sklearn.model_selection import train_test_split
+from google.colab import files
+from matplotlib import pyplot as plt
+
+time = []
+datos = pd.read_csv('bateriaco.csv')
+x = datos['fecha']
+y = datos['datos']
+X = x[:, np.newaxis]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+import numpy as np
+import pandas as pd
+from sklearn.neural_network import MLPRegressor
+
+datos = pd.read_csv('bateriaco.csv')
+x = datos['fecha']
+y = datos['datos']
+X = x[:, np.newaxis]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+while True:
+
+    from sklearn.model_selection import train_test_split
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+    mlr = MLPRegressor(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(3, 3), random_state=1)
+    mlr.fit(X_train, y_train)
+    print(mlr.score(X_train, y_train))
+    if mlr.score(X_train, y_train) > 0.95:
+        break
+
+predicciones = []
+aux = 0
+for i in range(60, 120):
+    print(i)
+    time.append(aux)
+    predicciones.append(mlr.predict([[i]]))
+    print(predicciones[aux])
+    aux = aux + 1
+
+plt.plot(time, predicciones, 'o')
+plt.title('Predicciones Contagiados en 2 meses Colombia')
+plt.ylabel('Contagios')
+plt.xlabel('Tiempo-Dias')
+plt.show()
+
 
 
 
